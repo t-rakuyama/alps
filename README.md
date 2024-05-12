@@ -16,8 +16,10 @@ https://alps-asd.github.io/manuals/1.0/ja/index.html
 
 - Docker がインストールされている
 
-リポジトリをクローン
-asd コマンドをインストールする
-`curl -L https://alps-asd.github.io/app-state-diagram/asd.sh > ./asd && chmod +x ./asd && sudo mv ./asd /usr/local/bin`
-ASD で表示する
-`asd --watch ./profile.xml`
+環境構築
+
+- リポジトリをクローン
+- asd コマンドをインストールする
+  - `curl -L https://alps-asd.github.io/app-state-diagram/asd.sh > ./asd && chmod +x ./asd && sudo mv ./asd /usr/local/bin`
+- ASD で表示する
+  - `asd --watch ./profile.xml`
