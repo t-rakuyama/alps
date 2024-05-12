@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alps
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
+     <!-- Ontology -->
+     <descriptor id="taskName" title="タスクの名前" />
+     <descriptor id="taskDescription" title="タスク詳細" />
+     <descriptor id="taskStatus" title="タスクステータス">
+        <doc format="markdown">タスクの現在の状態を表す。backlog, todo, doneの三種類を想定</doc>
+     </descriptor>
+     <descriptor id="taskUser" title="タスク担当者" />
+     <descriptor id="taskPoint" title="タスクのポイント" />
+     <descriptor id="commentContent" title="コメントの内容" />
+     <descriptor id="commentUser" title="ユーザー名" />
+
+     <!-- Taxonomy -->
+     <descriptor id="Task" title="タスク">
+        <descriptor href="#taskName" />
+        <descriptor href="#taskDescription" />
+        <descriptor href="#taskStatus" />
+        <descriptor href="#taskPoint" />
+        <descriptor href="#taskUser" />
+     </descriptor>
+
+     <descriptor id="Comment" title="コメント">
+        <descriptor href="#commentContent" />
+        <descriptor href="#commentUser" />
+     </descriptor>
+
+     <descriptor id="TaskList" title="タスク一覧">
+        <descriptor href="#Task" />
+        <descriptor id="goTaskDetail" type="safe" rt="#TaskDetail" title="タスクの詳細を見る"/>
+        <descriptor id="createTask" type="unsafe" rt="#TaskList" title="タスクを作成する"/>
+        <descriptor id="deleteTask" type="unsafe" rt="#TaskList" title="タスクを削除する"/>
+    </descriptor>
+
+    <descriptor id="TaskDetail" title="タスク詳細画面">
+        <descriptor href="#Task" />
+        <descriptor href="#taskDescription" />
+        <descriptor href="#Comment" />
+        <descriptor id="createComment" type="unsafe" rt="#TaskDetail" title="コメントを作成する"/>
+        <descriptor id="deleteComment" type="unsafe" rt="#TaskDetail" title="コメントを削除する"/>
+        <descriptor type="unsafe" id="editTask" rt="#TaskDetail" title="タスクを編集する" />
+        <descriptor type="unsafe" id="deleteTask" rt="#TaskDetail" title="タスクを削除する" />
+     </descriptor>
+     <descriptor id="Login" title="ログイン">
+        <descriptor id="goTaskList" type="safe" rt="#TaskList" title="タスク一覧を表示"/>
+     </descriptor>
+
+    <!-- Choreography -->
+    <descriptor type="safe" id="goTaskDetail" rt="#TaskDetail" title="タスク詳細を見る" />
+    <descriptor type="safe" id="goTaskList" rt="#TaskList" title="タスク詳細を見る" />
+    <descriptor type="unsafe" id="createTask" rt="#TaskList" title="タスクを作成する" />
+    <descriptor type="unsafe" id="editTask" rt="#TaskList" title="タスクを編集する" />
+    <descriptor type="unsafe" id="deleteTask" rt="#TaskList" title="タスクを削除する" />
+    <descriptor type="unsafe" id="createComment" rt="#TaskDetail" title="コメントを作成する" />
+    <descriptor type="unsafe" id="editComment" rt="#TaskDetail" title="コメントを編集する" />
+    <descriptor type="unsafe" id="deleteComment" rt="#TaskDetail" title="コメントを削除する" />
+</alps>

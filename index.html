@@ -1,0 +1,545 @@
+<html lang="en">
+<head>
+    <title>ALPS</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
+    <style>
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 25px;
+        }
+    
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+        .asd-view-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/viz.js@1.8.1/viz.js" type="javascript/worker"></script>
+<script src="https://unpkg.com/d3-graphviz@2.1.0/build/d3-graphviz.min.js"></script>
+<script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
+<script>// Applies smooth scroll to links
+const ease = (t, b, c, d) => {
+    t /= d / 2;
+    if (t < 1) return (c / 2) * t * t + b;
+    t--;
+    return (-c / 2) * (t * (t - 2) - 1) + b;
+};
+
+// Smoothly scrolls to the target element
+const smoothScrollTo = (targetElement) => {
+    const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    const duration = 1000;
+    let startTime = null;
+
+    const animate = (currentTime) => {
+        if (!startTime) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const run = ease(timeElapsed, startPosition, distance, duration);
+        window.scrollTo(0, run);
+        if (timeElapsed < duration) requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+    history.pushState(null, null, '#' + targetElement.getAttribute('name'));
+};
+
+const applySmoothScrollToLinks = (links) => {
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetName = link.getAttribute('href').slice(1);
+            const targetElement = document.querySelector(`[id="${targetName}"]`);
+            if (!targetElement) {
+                console.error("Target element not found for link:", link.getAttribute('href'));
+                return;
+            }
+            smoothScrollTo(targetElement);
+        });
+    });
+};
+
+
+// Renders the graph and applies smooth scroll to links
+const renderGraph = (graphId, dotString) => {
+    const graphviz = d3.select(graphId).graphviz();
+    graphviz.renderDot(dotString).on('end', () => {
+        applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
+    });
+};
+
+// Sets up event listeners for tags
+const setupTagEventListener = (eventName, titles, color, defaultColor = 'lightgrey', defaultEdgeColor = 'black') => {
+    const changeColor = (useDefault) => {
+        titles.forEach(title => {
+            changeColorByTitle(title, useDefault ? defaultColor : color, useDefault ? defaultEdgeColor : color);
+        });
+    };
+
+    document.addEventListener(`tagon-${eventName}`, () => changeColor(false));
+    document.addEventListener(`tagoff-${eventName}`, () => changeColor(true));
+};
+
+// Sets up triggers for tags
+const setupTagTrigger = () => {
+    const checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            this.checked ?
+                document.dispatchEvent(new CustomEvent('tagon-' + this.getAttribute('data-tag'))) :
+                document.dispatchEvent(new CustomEvent('tagoff-' + this.getAttribute('data-tag')));
+        });
+    });
+};
+
+// Changes color of elements by title or class
+const changeColorByTitle = (titleOrClass, newNodeColor, newEdgeColor) => {
+    const elements = Array.from(document.getElementsByTagName('g'));
+
+    elements.forEach(element => {
+        const titleElement = element.getElementsByTagName('title')[0];
+        const title = titleElement ? titleElement.textContent : '';
+
+        if (title === titleOrClass || element.classList.contains(titleOrClass)) {
+            const polygons = Array.from(element.getElementsByTagName('polygon'));
+            const paths = Array.from(element.getElementsByTagName('path'));
+
+            polygons.forEach(polygon => {
+                polygon.setAttribute('fill', newNodeColor);
+            });
+
+            paths.forEach(path => {
+                path.setAttribute('stroke', newEdgeColor);
+            });
+        }
+    });
+};
+
+// Sets up mode switch for graph display
+const setupModeSwitch = (switchId, graphId, otherGraphId) => {
+    document.getElementById(switchId).addEventListener('change', (e) => {
+        document.getElementById(graphId).style.display = e.target.checked ? 'block' : 'none';
+        document.getElementById(otherGraphId).style.display = e.target.checked ? 'none' : 'block';
+    });
+};
+</script></head>
+<body>
+    <div class="markdown-body">
+        <h1>ALPS</h1>
+
+<!-- Container for the ASDs -->
+
+<div id="asd-graph-id" style="text-align: center; "></div>
+
+<div id="asd-graph-name" style="text-align: center; display: none;"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    TaskDetail [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TaskDetail<br />(Task)<br />(taskDescription)<br />(Comment)<br /></td></tr></table>>,shape=box URL="#TaskDetail" target="_parent"]    TaskList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TaskList<br />(Task)<br /></td></tr></table>>,shape=box URL="#TaskList" target="_parent"]    Login -> TaskList [label = <goTaskList (safe)> URL="#goTaskList" target="_parent" fontsize=13 class="goTaskList" penwidth=1.5];    TaskDetail -> TaskDetail [label=<<table border="0"><tr><td align="left" href="#createComment" tooltip="createComment (unsafe)" >createComment (unsafe)</td></tr><tr><td align="left" href="#deleteComment" tooltip="deleteComment (unsafe)" >deleteComment (unsafe)</td></tr><tr><td align="left" href="#deleteTask" tooltip="deleteTask (unsafe)" >deleteTask (unsafe)</td></tr><tr><td align="left" href="#editTask" tooltip="editTask (unsafe)" >editTask (unsafe)</td></tr></table>> fontsize=13];    TaskList -> TaskDetail [label = <goTaskDetail (safe)> URL="#goTaskDetail" target="_parent" fontsize=13 class="goTaskDetail" penwidth=1.5];    TaskList -> TaskList [label=<<table border="0"><tr><td align="left" href="#createTask" tooltip="createTask (unsafe)" >createTask (unsafe)</td></tr><tr><td align="left" href="#deleteTask" tooltip="deleteTask (unsafe)" >deleteTask (unsafe)</td></tr></table>> fontsize=13];    Login [label = <Login> URL="#Login" target="_parent"]}');
+        renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    TaskDetail [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>タスク詳細画面<br />(タスク)<br />(タスク詳細)<br />(コメント)<br /></td></tr></table>>,shape=box URL="#TaskDetail" target="_parent"]    TaskList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>タスク一覧<br />(タスク)<br /></td></tr></table>>,shape=box URL="#TaskList" target="_parent"]    Login -> TaskList [label = <タスク一覧を表示> URL="#goTaskList" target="_parent" fontsize=13 class="goTaskList" penwidth=1.5];    TaskDetail -> TaskDetail [label=<<table border="0"><tr><td align="left" href="#createComment" tooltip="createComment (unsafe)" >createComment (unsafe)</td></tr><tr><td align="left" href="#deleteComment" tooltip="deleteComment (unsafe)" >deleteComment (unsafe)</td></tr><tr><td align="left" href="#deleteTask" tooltip="deleteTask (unsafe)" >deleteTask (unsafe)</td></tr><tr><td align="left" href="#editTask" tooltip="editTask (unsafe)" >editTask (unsafe)</td></tr></table>> fontsize=13];    TaskList -> TaskDetail [label = <タスクの詳細を見る> URL="#goTaskDetail" target="_parent" fontsize=13 class="goTaskDetail" penwidth=1.5];    TaskList -> TaskList [label=<<table border="0"><tr><td align="left" href="#createTask" tooltip="createTask (unsafe)" >createTask (unsafe)</td></tr><tr><td align="left" href="#deleteTask" tooltip="deleteTask (unsafe)" >deleteTask (unsafe)</td></tr></table>> fontsize=13];    Login [label = <ログイン> URL="#Login" target="_parent"]}');
+        setupTagTrigger();
+        setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
+        setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
+        applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
+        
+    });
+</script>
+
+<div class="asd-view-selector">
+    <input type="radio" id="asd-show-id" checked name="asd-view-selector">
+    <label for="asd-show-id">id<ID/label>
+    <input type="radio" id="asd-show-name" name="asd-view-selector">
+    <label for="asd-show-name">title</label>
+</div>
+
+<h2>Semantic Descriptors</h2>
+
+<h3><a id="Comment">Comment</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: コメント</li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#commentContent">commentContent</a></td>
+  <td>semantic</td>
+  <td>コメントの内容</td>
+</tr>
+<tr>
+  <td><a href="#commentUser">commentUser</a></td>
+  <td>semantic</td>
+  <td>ユーザー名</td>
+</tr>
+</tbody>
+</table>
+
+<h3><a id="commentContent">commentContent</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: コメントの内容</li>
+</ul>
+
+<h3><a id="commentUser">commentUser</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: ユーザー名</li>
+</ul>
+
+<h3><a id="createComment">createComment</a></h3>
+
+<ul>
+<li>type: unsafe</li>
+<li>title: コメントを作成する</li>
+<li>rt: <a href="#TaskDetail">TaskDetail</a></li>
+</ul>
+
+<h3><a id="createTask">createTask</a></h3>
+
+<ul>
+<li>type: unsafe</li>
+<li>title: タスクを作成する</li>
+<li>rt: <a href="#TaskList">TaskList</a></li>
+</ul>
+
+<h3><a id="deleteComment">deleteComment</a></h3>
+
+<ul>
+<li>type: unsafe</li>
+<li>title: コメントを削除する</li>
+<li>rt: <a href="#TaskDetail">TaskDetail</a></li>
+</ul>
+
+<h3><a id="deleteTask">deleteTask</a></h3>
+
+<ul>
+<li>type: unsafe</li>
+<li>title: タスクを削除する</li>
+<li>rt: <a href="#TaskList">TaskList</a></li>
+</ul>
+
+<h3><a id="editComment">editComment</a></h3>
+
+<ul>
+<li>type: unsafe</li>
+<li>title: コメントを編集する</li>
+<li>rt: <a href="#TaskDetail">TaskDetail</a></li>
+</ul>
+
+<h3><a id="editTask">editTask</a></h3>
+
+<ul>
+<li>type: unsafe</li>
+<li>title: タスクを編集する</li>
+<li>rt: <a href="#TaskList">TaskList</a></li>
+</ul>
+
+<h3><a id="goTaskDetail">goTaskDetail</a></h3>
+
+<ul>
+<li>type: safe</li>
+<li>title: タスク詳細を見る</li>
+<li>rt: <a href="#TaskDetail">TaskDetail</a></li>
+</ul>
+
+<h3><a id="goTaskList">goTaskList</a></h3>
+
+<ul>
+<li>type: safe</li>
+<li>title: タスク詳細を見る</li>
+<li>rt: <a href="#TaskList">TaskList</a></li>
+</ul>
+
+<h3><a id="Login">Login</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: ログイン</li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#goTaskList">goTaskList</a></td>
+  <td>safe</td>
+  <td>タスク詳細を見る</td>
+</tr>
+</tbody>
+</table>
+
+<h3><a id="Task">Task</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: タスク</li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#taskName">taskName</a></td>
+  <td>semantic</td>
+  <td>タスクの名前</td>
+</tr>
+<tr>
+  <td><a href="#taskDescription">taskDescription</a></td>
+  <td>semantic</td>
+  <td>タスク詳細</td>
+</tr>
+<tr>
+  <td><a href="#taskStatus">taskStatus</a></td>
+  <td>semantic</td>
+  <td>タスクステータス</td>
+</tr>
+<tr>
+  <td><a href="#taskPoint">taskPoint</a></td>
+  <td>semantic</td>
+  <td>タスクのポイント</td>
+</tr>
+<tr>
+  <td><a href="#taskUser">taskUser</a></td>
+  <td>semantic</td>
+  <td>タスク担当者</td>
+</tr>
+</tbody>
+</table>
+
+<h3><a id="taskDescription">taskDescription</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: タスク詳細</li>
+</ul>
+
+<h3><a id="TaskDetail">TaskDetail</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: タスク詳細画面</li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#Task">Task</a></td>
+  <td>semantic</td>
+  <td>タスク</td>
+</tr>
+<tr>
+  <td><a href="#taskDescription">taskDescription</a></td>
+  <td>semantic</td>
+  <td>タスク詳細</td>
+</tr>
+<tr>
+  <td><a href="#Comment">Comment</a></td>
+  <td>semantic</td>
+  <td>コメント</td>
+</tr>
+<tr>
+  <td><a href="#createComment">createComment</a></td>
+  <td>unsafe</td>
+  <td>コメントを作成する</td>
+</tr>
+<tr>
+  <td><a href="#deleteComment">deleteComment</a></td>
+  <td>unsafe</td>
+  <td>コメントを削除する</td>
+</tr>
+<tr>
+  <td><a href="#editTask">editTask</a></td>
+  <td>unsafe</td>
+  <td>タスクを編集する</td>
+</tr>
+<tr>
+  <td><a href="#deleteTask">deleteTask</a></td>
+  <td>unsafe</td>
+  <td>タスクを削除する</td>
+</tr>
+</tbody>
+</table>
+
+<h3><a id="TaskList">TaskList</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: タスク一覧</li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#Task">Task</a></td>
+  <td>semantic</td>
+  <td>タスク</td>
+</tr>
+<tr>
+  <td><a href="#goTaskDetail">goTaskDetail</a></td>
+  <td>safe</td>
+  <td>タスク詳細を見る</td>
+</tr>
+<tr>
+  <td><a href="#createTask">createTask</a></td>
+  <td>unsafe</td>
+  <td>タスクを作成する</td>
+</tr>
+<tr>
+  <td><a href="#deleteTask">deleteTask</a></td>
+  <td>unsafe</td>
+  <td>タスクを削除する</td>
+</tr>
+</tbody>
+</table>
+
+<h3><a id="taskName">taskName</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: タスクの名前</li>
+</ul>
+
+<h3><a id="taskPoint">taskPoint</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: タスクのポイント</li>
+</ul>
+
+<h3><a id="taskStatus">taskStatus</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: タスクステータス</li>
+<li>doc: タスクの現在の状態を表す。backlog, todo, doneの三種類を想定</li>
+</ul>
+
+<h3><a id="taskUser">taskUser</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: タスク担当者</li>
+</ul>
+
+<hr />
+
+<h2>Profile</h2>
+
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;alps
+     xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+     xsi:noNamespaceSchemaLocation=&quot;https://alps-io.github.io/schemas/alps.xsd&quot;&gt;
+     &lt;!-- Ontology --&gt;
+     &lt;descriptor id=&quot;taskName&quot; title=&quot;タスクの名前&quot; /&gt;
+     &lt;descriptor id=&quot;taskDescription&quot; title=&quot;タスク詳細&quot; /&gt;
+     &lt;descriptor id=&quot;taskStatus&quot; title=&quot;タスクステータス&quot;&gt;
+        &lt;doc format=&quot;markdown&quot;&gt;タスクの現在の状態を表す。backlog, todo, doneの三種類を想定&lt;/doc&gt;
+     &lt;/descriptor&gt;
+     &lt;descriptor id=&quot;taskUser&quot; title=&quot;タスク担当者&quot; /&gt;
+     &lt;descriptor id=&quot;taskPoint&quot; title=&quot;タスクのポイント&quot; /&gt;
+     &lt;descriptor id=&quot;commentContent&quot; title=&quot;コメントの内容&quot; /&gt;
+     &lt;descriptor id=&quot;commentUser&quot; title=&quot;ユーザー名&quot; /&gt;
+
+     &lt;!-- Taxonomy --&gt;
+     &lt;descriptor id=&quot;Task&quot; title=&quot;タスク&quot;&gt;
+        &lt;descriptor href=&quot;#taskName&quot; /&gt;
+        &lt;descriptor href=&quot;#taskDescription&quot; /&gt;
+        &lt;descriptor href=&quot;#taskStatus&quot; /&gt;
+        &lt;descriptor href=&quot;#taskPoint&quot; /&gt;
+        &lt;descriptor href=&quot;#taskUser&quot; /&gt;
+     &lt;/descriptor&gt;
+
+     &lt;descriptor id=&quot;Comment&quot; title=&quot;コメント&quot;&gt;
+        &lt;descriptor href=&quot;#commentContent&quot; /&gt;
+        &lt;descriptor href=&quot;#commentUser&quot; /&gt;
+     &lt;/descriptor&gt;
+
+     &lt;descriptor id=&quot;TaskList&quot; title=&quot;タスク一覧&quot;&gt;
+        &lt;descriptor href=&quot;#Task&quot; /&gt;
+        &lt;descriptor id=&quot;goTaskDetail&quot; type=&quot;safe&quot; rt=&quot;#TaskDetail&quot; title=&quot;タスクの詳細を見る&quot;/&gt;
+        &lt;descriptor id=&quot;createTask&quot; type=&quot;unsafe&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを作成する&quot;/&gt;
+        &lt;descriptor id=&quot;deleteTask&quot; type=&quot;unsafe&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを削除する&quot;/&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;TaskDetail&quot; title=&quot;タスク詳細画面&quot;&gt;
+        &lt;descriptor href=&quot;#Task&quot; /&gt;
+        &lt;descriptor href=&quot;#taskDescription&quot; /&gt;
+        &lt;descriptor href=&quot;#Comment&quot; /&gt;
+        &lt;descriptor id=&quot;createComment&quot; type=&quot;unsafe&quot; rt=&quot;#TaskDetail&quot; title=&quot;コメントを作成する&quot;/&gt;
+        &lt;descriptor id=&quot;deleteComment&quot; type=&quot;unsafe&quot; rt=&quot;#TaskDetail&quot; title=&quot;コメントを削除する&quot;/&gt;
+        &lt;descriptor type=&quot;unsafe&quot; id=&quot;editTask&quot; rt=&quot;#TaskDetail&quot; title=&quot;タスクを編集する&quot; /&gt;
+        &lt;descriptor type=&quot;unsafe&quot; id=&quot;deleteTask&quot; rt=&quot;#TaskDetail&quot; title=&quot;タスクを削除する&quot; /&gt;
+     &lt;/descriptor&gt;
+     &lt;descriptor id=&quot;Login&quot; title=&quot;ログイン&quot;&gt;
+        &lt;descriptor id=&quot;goTaskList&quot; type=&quot;safe&quot; rt=&quot;#TaskList&quot; title=&quot;タスク一覧を表示&quot;/&gt;
+     &lt;/descriptor&gt;
+
+    &lt;!-- Choreography --&gt;
+    &lt;descriptor type=&quot;safe&quot; id=&quot;goTaskDetail&quot; rt=&quot;#TaskDetail&quot; title=&quot;タスク詳細を見る&quot; /&gt;
+    &lt;descriptor type=&quot;safe&quot; id=&quot;goTaskList&quot; rt=&quot;#TaskList&quot; title=&quot;タスク詳細を見る&quot; /&gt;
+    &lt;descriptor type=&quot;unsafe&quot; id=&quot;createTask&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを作成する&quot; /&gt;
+    &lt;descriptor type=&quot;unsafe&quot; id=&quot;editTask&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを編集する&quot; /&gt;
+    &lt;descriptor type=&quot;unsafe&quot; id=&quot;deleteTask&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを削除する&quot; /&gt;
+    &lt;descriptor type=&quot;unsafe&quot; id=&quot;createComment&quot; rt=&quot;#TaskDetail&quot; title=&quot;コメントを作成する&quot; /&gt;
+    &lt;descriptor type=&quot;unsafe&quot; id=&quot;editComment&quot; rt=&quot;#TaskDetail&quot; title=&quot;コメントを編集する&quot; /&gt;
+    &lt;descriptor type=&quot;unsafe&quot; id=&quot;deleteComment&quot; rt=&quot;#TaskDetail&quot; title=&quot;コメントを削除する&quot; /&gt;
+&lt;/alps&gt;
+</code></pre>
+
+    </div>
+</body>
+</html>
