@@ -29,27 +29,29 @@
 
      <descriptor id="TaskList" title="タスク一覧">
         <descriptor href="#Task" />
-        <descriptor id="goTaskDetail" type="safe" rt="#TaskDetail" title="タスクの詳細を見る"/>
-        <descriptor id="createTask" type="unsafe" rt="#TaskList" title="タスクを作成する"/>
-        <descriptor id="deleteTask" type="unsafe" rt="#TaskList" title="タスクを削除する"/>
+        <descriptor id="goSearchTask" type="safe" rt="#TaskList" title="タスクを検索する" />
+        <descriptor id="goTaskDetail" type="safe" rt="#TaskDetail" title="タスクの詳細を見る" />
+        <descriptor id="createTask" type="unsafe" rt="#TaskList" title="タスクを作成する" />
+        <descriptor id="deleteTask" type="unsafe" rt="#TaskList" title="タスクを削除する" />
     </descriptor>
 
     <descriptor id="TaskDetail" title="タスク詳細画面">
         <descriptor href="#Task" />
         <descriptor href="#taskDescription" />
         <descriptor href="#Comment" />
-        <descriptor id="createComment" type="unsafe" rt="#TaskDetail" title="コメントを作成する"/>
-        <descriptor id="deleteComment" type="unsafe" rt="#TaskDetail" title="コメントを削除する"/>
+        <descriptor id="createComment" type="unsafe" rt="#TaskDetail" title="コメントを作成する" />
+        <descriptor id="deleteComment" type="unsafe" rt="#TaskDetail" title="コメントを削除する" />
         <descriptor type="unsafe" id="editTask" rt="#TaskDetail" title="タスクを編集する" />
         <descriptor type="unsafe" id="deleteTask" rt="#TaskDetail" title="タスクを削除する" />
      </descriptor>
      <descriptor id="Login" title="ログイン">
-        <descriptor id="goTaskList" type="safe" rt="#TaskList" title="タスク一覧を表示"/>
+        <descriptor id="goTaskList" type="safe" rt="#TaskList" title="タスク一覧を表示" />
      </descriptor>
 
     <!-- Choreography -->
     <descriptor type="safe" id="goTaskDetail" rt="#TaskDetail" title="タスク詳細を見る" />
     <descriptor type="safe" id="goTaskList" rt="#TaskList" title="タスク詳細を見る" />
+    <descriptor type="safe" id="goSearchTask" rt="#TaskList" title="タスクを検索する" />
     <descriptor type="unsafe" id="createTask" rt="#TaskList" title="タスクを作成する" />
     <descriptor type="unsafe" id="editTask" rt="#TaskList" title="タスクを編集する" />
     <descriptor type="unsafe" id="deleteTask" rt="#TaskList" title="タスクを削除する" />

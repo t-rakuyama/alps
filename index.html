@@ -147,8 +147,8 @@ const setupModeSwitch = (switchId, graphId, otherGraphId) => {
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    TaskDetail [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TaskDetail<br />(Task)<br />(taskDescription)<br />(Comment)<br /></td></tr></table>>,shape=box URL="#TaskDetail" target="_parent"]    TaskList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TaskList<br />(Task)<br /></td></tr></table>>,shape=box URL="#TaskList" target="_parent"]    Login -> TaskList [label = <goTaskList (safe)> URL="#goTaskList" target="_parent" fontsize=13 class="goTaskList" penwidth=1.5];    TaskDetail -> TaskDetail [label=<<table border="0"><tr><td align="left" href="#createComment" tooltip="createComment (unsafe)" >createComment (unsafe)</td></tr><tr><td align="left" href="#deleteComment" tooltip="deleteComment (unsafe)" >deleteComment (unsafe)</td></tr><tr><td align="left" href="#deleteTask" tooltip="deleteTask (unsafe)" >deleteTask (unsafe)</td></tr><tr><td align="left" href="#editTask" tooltip="editTask (unsafe)" >editTask (unsafe)</td></tr></table>> fontsize=13];    TaskList -> TaskDetail [label = <goTaskDetail (safe)> URL="#goTaskDetail" target="_parent" fontsize=13 class="goTaskDetail" penwidth=1.5];    TaskList -> TaskList [label=<<table border="0"><tr><td align="left" href="#createTask" tooltip="createTask (unsafe)" >createTask (unsafe)</td></tr><tr><td align="left" href="#deleteTask" tooltip="deleteTask (unsafe)" >deleteTask (unsafe)</td></tr></table>> fontsize=13];    Login [label = <Login> URL="#Login" target="_parent"]}');
-        renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    TaskDetail [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>タスク詳細画面<br />(タスク)<br />(タスク詳細)<br />(コメント)<br /></td></tr></table>>,shape=box URL="#TaskDetail" target="_parent"]    TaskList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>タスク一覧<br />(タスク)<br /></td></tr></table>>,shape=box URL="#TaskList" target="_parent"]    Login -> TaskList [label = <タスク一覧を表示> URL="#goTaskList" target="_parent" fontsize=13 class="goTaskList" penwidth=1.5];    TaskDetail -> TaskDetail [label=<<table border="0"><tr><td align="left" href="#createComment" tooltip="createComment (unsafe)" >createComment (unsafe)</td></tr><tr><td align="left" href="#deleteComment" tooltip="deleteComment (unsafe)" >deleteComment (unsafe)</td></tr><tr><td align="left" href="#deleteTask" tooltip="deleteTask (unsafe)" >deleteTask (unsafe)</td></tr><tr><td align="left" href="#editTask" tooltip="editTask (unsafe)" >editTask (unsafe)</td></tr></table>> fontsize=13];    TaskList -> TaskDetail [label = <タスクの詳細を見る> URL="#goTaskDetail" target="_parent" fontsize=13 class="goTaskDetail" penwidth=1.5];    TaskList -> TaskList [label=<<table border="0"><tr><td align="left" href="#createTask" tooltip="createTask (unsafe)" >createTask (unsafe)</td></tr><tr><td align="left" href="#deleteTask" tooltip="deleteTask (unsafe)" >deleteTask (unsafe)</td></tr></table>> fontsize=13];    Login [label = <ログイン> URL="#Login" target="_parent"]}');
+        renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    TaskDetail [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TaskDetail<br />(Task)<br />(taskDescription)<br />(Comment)<br /></td></tr></table>>,shape=box URL="#TaskDetail" target="_parent"]    TaskList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TaskList<br />(Task)<br /></td></tr></table>>,shape=box URL="#TaskList" target="_parent"]    Login -> TaskList [label = <goTaskList (safe)> URL="#goTaskList" target="_parent" fontsize=13 class="goTaskList" penwidth=1.5];    TaskDetail -> TaskDetail [label=<<table border="0"><tr><td align="left" href="#createComment" tooltip="createComment (unsafe)" >createComment (unsafe)</td></tr><tr><td align="left" href="#deleteComment" tooltip="deleteComment (unsafe)" >deleteComment (unsafe)</td></tr><tr><td align="left" href="#deleteTask" tooltip="deleteTask (unsafe)" >deleteTask (unsafe)</td></tr><tr><td align="left" href="#editTask" tooltip="editTask (unsafe)" >editTask (unsafe)</td></tr></table>> fontsize=13];    TaskList -> TaskDetail [label = <goTaskDetail (safe)> URL="#goTaskDetail" target="_parent" fontsize=13 class="goTaskDetail" penwidth=1.5];    TaskList -> TaskList [label=<<table border="0"><tr><td align="left" href="#createTask" tooltip="createTask (unsafe)" >createTask (unsafe)</td></tr><tr><td align="left" href="#deleteTask" tooltip="deleteTask (unsafe)" >deleteTask (unsafe)</td></tr><tr><td align="left" href="#goSearchTask" tooltip="goSearchTask (safe)" >goSearchTask (safe)</td></tr></table>> fontsize=13];    Login [label = <Login> URL="#Login" target="_parent"]}');
+        renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    TaskDetail [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>タスク詳細画面<br />(タスク)<br />(タスク詳細)<br />(コメント)<br /></td></tr></table>>,shape=box URL="#TaskDetail" target="_parent"]    TaskList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>タスク一覧<br />(タスク)<br /></td></tr></table>>,shape=box URL="#TaskList" target="_parent"]    Login -> TaskList [label = <タスク一覧を表示> URL="#goTaskList" target="_parent" fontsize=13 class="goTaskList" penwidth=1.5];    TaskDetail -> TaskDetail [label=<<table border="0"><tr><td align="left" href="#createComment" tooltip="createComment (unsafe)" >createComment (unsafe)</td></tr><tr><td align="left" href="#deleteComment" tooltip="deleteComment (unsafe)" >deleteComment (unsafe)</td></tr><tr><td align="left" href="#deleteTask" tooltip="deleteTask (unsafe)" >deleteTask (unsafe)</td></tr><tr><td align="left" href="#editTask" tooltip="editTask (unsafe)" >editTask (unsafe)</td></tr></table>> fontsize=13];    TaskList -> TaskDetail [label = <タスクの詳細を見る> URL="#goTaskDetail" target="_parent" fontsize=13 class="goTaskDetail" penwidth=1.5];    TaskList -> TaskList [label=<<table border="0"><tr><td align="left" href="#createTask" tooltip="createTask (unsafe)" >createTask (unsafe)</td></tr><tr><td align="left" href="#deleteTask" tooltip="deleteTask (unsafe)" >deleteTask (unsafe)</td></tr><tr><td align="left" href="#goSearchTask" tooltip="goSearchTask (safe)" >goSearchTask (safe)</td></tr></table>> fontsize=13];    Login [label = <ログイン> URL="#Login" target="_parent"]}');
         setupTagTrigger();
         setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
         setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
@@ -255,6 +255,14 @@ const setupModeSwitch = (switchId, graphId, otherGraphId) => {
 <ul>
 <li>type: unsafe</li>
 <li>title: タスクを編集する</li>
+<li>rt: <a href="#TaskList">TaskList</a></li>
+</ul>
+
+<h3><a id="goSearchTask">goSearchTask</a></h3>
+
+<ul>
+<li>type: safe</li>
+<li>title: タスクを検索する</li>
 <li>rt: <a href="#TaskList">TaskList</a></li>
 </ul>
 
@@ -429,6 +437,11 @@ const setupModeSwitch = (switchId, graphId, otherGraphId) => {
   <td>タスク</td>
 </tr>
 <tr>
+  <td><a href="#goSearchTask">goSearchTask</a></td>
+  <td>safe</td>
+  <td>タスクを検索する</td>
+</tr>
+<tr>
   <td><a href="#goTaskDetail">goTaskDetail</a></td>
   <td>safe</td>
   <td>タスク詳細を見る</td>
@@ -510,27 +523,29 @@ const setupModeSwitch = (switchId, graphId, otherGraphId) => {
 
      &lt;descriptor id=&quot;TaskList&quot; title=&quot;タスク一覧&quot;&gt;
         &lt;descriptor href=&quot;#Task&quot; /&gt;
-        &lt;descriptor id=&quot;goTaskDetail&quot; type=&quot;safe&quot; rt=&quot;#TaskDetail&quot; title=&quot;タスクの詳細を見る&quot;/&gt;
-        &lt;descriptor id=&quot;createTask&quot; type=&quot;unsafe&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを作成する&quot;/&gt;
-        &lt;descriptor id=&quot;deleteTask&quot; type=&quot;unsafe&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを削除する&quot;/&gt;
+        &lt;descriptor id=&quot;goSearchTask&quot; type=&quot;safe&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを検索する&quot; /&gt;
+        &lt;descriptor id=&quot;goTaskDetail&quot; type=&quot;safe&quot; rt=&quot;#TaskDetail&quot; title=&quot;タスクの詳細を見る&quot; /&gt;
+        &lt;descriptor id=&quot;createTask&quot; type=&quot;unsafe&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを作成する&quot; /&gt;
+        &lt;descriptor id=&quot;deleteTask&quot; type=&quot;unsafe&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを削除する&quot; /&gt;
     &lt;/descriptor&gt;
 
     &lt;descriptor id=&quot;TaskDetail&quot; title=&quot;タスク詳細画面&quot;&gt;
         &lt;descriptor href=&quot;#Task&quot; /&gt;
         &lt;descriptor href=&quot;#taskDescription&quot; /&gt;
         &lt;descriptor href=&quot;#Comment&quot; /&gt;
-        &lt;descriptor id=&quot;createComment&quot; type=&quot;unsafe&quot; rt=&quot;#TaskDetail&quot; title=&quot;コメントを作成する&quot;/&gt;
-        &lt;descriptor id=&quot;deleteComment&quot; type=&quot;unsafe&quot; rt=&quot;#TaskDetail&quot; title=&quot;コメントを削除する&quot;/&gt;
+        &lt;descriptor id=&quot;createComment&quot; type=&quot;unsafe&quot; rt=&quot;#TaskDetail&quot; title=&quot;コメントを作成する&quot; /&gt;
+        &lt;descriptor id=&quot;deleteComment&quot; type=&quot;unsafe&quot; rt=&quot;#TaskDetail&quot; title=&quot;コメントを削除する&quot; /&gt;
         &lt;descriptor type=&quot;unsafe&quot; id=&quot;editTask&quot; rt=&quot;#TaskDetail&quot; title=&quot;タスクを編集する&quot; /&gt;
         &lt;descriptor type=&quot;unsafe&quot; id=&quot;deleteTask&quot; rt=&quot;#TaskDetail&quot; title=&quot;タスクを削除する&quot; /&gt;
      &lt;/descriptor&gt;
      &lt;descriptor id=&quot;Login&quot; title=&quot;ログイン&quot;&gt;
-        &lt;descriptor id=&quot;goTaskList&quot; type=&quot;safe&quot; rt=&quot;#TaskList&quot; title=&quot;タスク一覧を表示&quot;/&gt;
+        &lt;descriptor id=&quot;goTaskList&quot; type=&quot;safe&quot; rt=&quot;#TaskList&quot; title=&quot;タスク一覧を表示&quot; /&gt;
      &lt;/descriptor&gt;
 
     &lt;!-- Choreography --&gt;
     &lt;descriptor type=&quot;safe&quot; id=&quot;goTaskDetail&quot; rt=&quot;#TaskDetail&quot; title=&quot;タスク詳細を見る&quot; /&gt;
     &lt;descriptor type=&quot;safe&quot; id=&quot;goTaskList&quot; rt=&quot;#TaskList&quot; title=&quot;タスク詳細を見る&quot; /&gt;
+    &lt;descriptor type=&quot;safe&quot; id=&quot;goSearchTask&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを検索する&quot; /&gt;
     &lt;descriptor type=&quot;unsafe&quot; id=&quot;createTask&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを作成する&quot; /&gt;
     &lt;descriptor type=&quot;unsafe&quot; id=&quot;editTask&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを編集する&quot; /&gt;
     &lt;descriptor type=&quot;unsafe&quot; id=&quot;deleteTask&quot; rt=&quot;#TaskList&quot; title=&quot;タスクを削除する&quot; /&gt;
